@@ -28,6 +28,9 @@ const url =
         }
       });
 // DB connection end
+app.get("", (req, res) => {
+  res.send("server running");
+});
 app.use(userrouter)
 app.use(loginRouter)
 app.use(roomRouter)
