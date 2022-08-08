@@ -42,7 +42,7 @@ const port = process.env.PORT || 5000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "chatserver-1gucge3s3-arafat2020.vercel.app",
+    origin: "chatserver.vercel.app",
     allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
