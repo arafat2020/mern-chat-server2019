@@ -7,13 +7,15 @@ const router = new express.Router();
 
 router.use(authMiddleware);
 router.post("/msg", async (req, res) => {
-  if (req.user) {
-    await Room.findOne({ roomName: req.body.room }, (err, data) => {
+  if (req.user && req.body.room) {
+    try{
+      await Room.findOne({ roomName: req.body.room }, (err, data) => {
       if (err) {
         return res.status(404);
         console.log(err);
       } else {
-        const msg = new Msg({
+       try{
+         const msg = new Msg({
           msg: req.body.msg,
           sender: req.user.name,
           room: data.roomName,
@@ -26,27 +28,41 @@ router.post("/msg", async (req, res) => {
           .catch((err) => {
             res.send(err);
           });
+        }catch(err){
+          res.sendStatus(404)
+        }
       }
     }).clone();
+    }catch(err){
+      res.status(404).send('room not found')
+    }
+  }else{
+   res.status(404)
   }
 });
 
 router.post("/get_msg", (req, res) => {
-  if (req.user) {
+  if (req.user && req.body.room ) {
     if (req.body.room) {
       Room.findOne({ roomName: req.body.room }, (err, data) => {
         if (err) {
           res.send(err);
         } else {
-          Msg.find({ room: data.roomName })
+          try{
+            Msg.find({ room: data.roomName })
             .then((msg) => {
               res.send(msg);
             })
             .catch((err) => {
               res.send(err);
             });
+          }catch(err){
+            res.send(404)
+          }
         }
       });
+    }else{
+      res.status(404)
     }
   }
 });
